@@ -1,0 +1,55 @@
+==================================================================
+https://keybase.io/lorenzleutgeb
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://lorenz.leutgeb.xyz
+  * I am lorenzleutgeb (https://keybase.io/lorenzleutgeb) on keybase.
+  * I have a public key ASC9OnLnbAm_4y1Nr3Cw6-AuZ2plnVbQDq6R01d1kE_N5wo
+
+To do so, I am signing this object:
+
+{
+    &quot;body&quot;: {
+        &quot;key&quot;: {
+            &quot;eldest_kid&quot;: &quot;0120bd3a72e76c09bfe32d4daf70b0ebe02e676a659d56d00eae91d35775904fcde70a&quot;,
+            &quot;host&quot;: &quot;keybase.io&quot;,
+            &quot;kid&quot;: &quot;0120bd3a72e76c09bfe32d4daf70b0ebe02e676a659d56d00eae91d35775904fcde70a&quot;,
+            &quot;uid&quot;: &quot;e768763e419347936cc82b48d7240a19&quot;,
+            &quot;username&quot;: &quot;lorenzleutgeb&quot;
+        },
+        &quot;merkle_root&quot;: {
+            &quot;ctime&quot;: 1500730834,
+            &quot;hash&quot;: &quot;eb456d0e66c8639d2de8ef542dddc7279299075493710d78a7ad7ba2d88d07310ce56d8a4e3098a8a3a5f46ddfd715338c6b0af48c34f425d0704952c477daba&quot;,
+            &quot;hash_meta&quot;: &quot;260bd7eaf361468b88f36ab75dc75db71dc099870bfcd113c1102ab30226e65d&quot;,
+            &quot;seqno&quot;: 1271580
+        },
+        &quot;service&quot;: {
+            &quot;hostname&quot;: &quot;lorenz.leutgeb.xyz&quot;,
+            &quot;protocol&quot;: &quot;https:&quot;
+        },
+        &quot;type&quot;: &quot;web_service_binding&quot;,
+        &quot;version&quot;: 1
+    },
+    &quot;client&quot;: {
+        &quot;name&quot;: &quot;keybase.io go client&quot;,
+        &quot;version&quot;: &quot;1.0.25&quot;
+    },
+    &quot;ctime&quot;: 1500730864,
+    &quot;expire_in&quot;: 504576000,
+    &quot;prev&quot;: &quot;50673b9d28a2437df2ceb28d9c9511262185e62bdd5bceada819d4d2aca3f93f&quot;,
+    &quot;seqno&quot;: 9,
+    &quot;tag&quot;: &quot;signature&quot;
+}
+
+which yields the signature:
+
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEgvTpy52wJv+MtTa9wsOvgLmdqZZ1W0A6ukdNXdZBPzecKp3BheWxvYWTFA097ImJvZHkiOnsia2V5Ijp7ImVsZGVzdF9raWQiOiIwMTIwYmQzYTcyZTc2YzA5YmZlMzJkNGRhZjcwYjBlYmUwMmU2NzZhNjU5ZDU2ZDAwZWFlOTFkMzU3NzU5MDRmY2RlNzBhIiwiaG9zdCI6ImtleWJhc2UuaW8iLCJraWQiOiIwMTIwYmQzYTcyZTc2YzA5YmZlMzJkNGRhZjcwYjBlYmUwMmU2NzZhNjU5ZDU2ZDAwZWFlOTFkMzU3NzU5MDRmY2RlNzBhIiwidWlkIjoiZTc2ODc2M2U0MTkzNDc5MzZjYzgyYjQ4ZDcyNDBhMTkiLCJ1c2VybmFtZSI6ImxvcmVuemxldXRnZWIifSwibWVya2xlX3Jvb3QiOnsiY3RpbWUiOjE1MDA3MzA4MzQsImhhc2giOiJlYjQ1NmQwZTY2Yzg2MzlkMmRlOGVmNTQyZGRkYzcyNzkyOTkwNzU0OTM3MTBkNzhhN2FkN2JhMmQ4OGQwNzMxMGNlNTZkOGE0ZTMwOThhOGEzYTVmNDZkZGZkNzE1MzM4YzZiMGFmNDhjMzRmNDI1ZDA3MDQ5NTJjNDc3ZGFiYSIsImhhc2hfbWV0YSI6IjI2MGJkN2VhZjM2MTQ2OGI4OGYzNmFiNzVkYzc1ZGI3MWRjMDk5ODcwYmZjZDExM2MxMTAyYWIzMDIyNmU2NWQiLCJzZXFubyI6MTI3MTU4MH0sInNlcnZpY2UiOnsiaG9zdG5hbWUiOiJsb3JlbnoubGV1dGdlYi54eXoiLCJwcm90b2NvbCI6Imh0dHBzOiJ9LCJ0eXBlIjoid2ViX3NlcnZpY2VfYmluZGluZyIsInZlcnNpb24iOjF9LCJjbGllbnQiOnsibmFtZSI6ImtleWJhc2UuaW8gZ28gY2xpZW50IiwidmVyc2lvbiI6IjEuMC4yNSJ9LCJjdGltZSI6MTUwMDczMDg2NCwiZXhwaXJlX2luIjo1MDQ1NzYwMDAsInByZXYiOiI1MDY3M2I5ZDI4YTI0MzdkZjJjZWIyOGQ5Yzk1MTEyNjIxODVlNjJiZGQ1YmNlYWRhODE5ZDRkMmFjYTNmOTNmIiwic2Vxbm8iOjksInRhZyI6InNpZ25hdHVyZSJ9o3NpZ8RAbUsnnhJn2yXMM8UiWN9gbPDcDC2bFanILZb3bCjih8Mx1/RZV9br67jIyfXMxR9ZTf8Q5susDm5r1Y/lQndrAKhzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIIacrM/1B9mrIe/AheQK7uWWF0z7RsWfajOybKb1+0AVo3RhZ80CAqd2ZXJzaW9uAQ==
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/lorenzleutgeb
+
+==================================================================
