@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+<title>Lorenz Leutgeb</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style type="text/css">
+@import url(fonts/fira-sans.css);
+@import url(base.css);
+
+div.content div {
+	padding: 5px;
+}
+div.title {
+	font-size: 120%;
+}
+
+div.entry.described > div.title::before {
+	color: #333;
+	content: '▼ ';
+}
+
+div.entry.expanded > div.title::before {
+	color: #333;
+	content: '▲ ';
+}
+
+div.time, div.loc {
+	font-size: 80%;
+}
+
+div.tags {
+	font-size: 90%;
+}
+
+div.tags, div.time, #t, #taglist {
+	font-family: 'Source Code Pro', 'Consolas', monospace;
+	padding: 1px;
+	color: #333;
+}
+
+div.entry, div.desc {
+	display: none;
+}
+
+div.entry {
+	margin-bottom: 25px;
+	border-left: 1px solid #333;
+	padding: 10px;
+}
+
+div.desc {
+	text-align: justify;
+}
+
+div.title, div.time, div.tags {
+	padding: 5px;
+}
+
+div.content {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	min-height: min-content;
+}
+
+#filter {
+	position: fixed;
+	right: 100px;
+	top: 100px;
+	background-color: #fff;
+	z-index: 1;
+	border: 1px solid #333;
+	padding: 20px;
+	line-height: 2;
+}
+
+@media print
+{
+	.no-print, .no-print *
+	{
+		display: none !important;
+	}
+	body {
+		padding: 5px;
+	}
+}
+input:invalid {
+	color: red;
+}
+#taglist {
+	font-size: 80%;
+}
+
+p.center {
+	text-align: center;
+}
+div.entries {
+width: 80%;
+    max-width: 21cm;
+}
+</style>
+<script>
+function parseQuery() {
+	var query = {};
+	var a = location.hash.substr(1).split('&');
+	for (var i = 0; i < a.length; i++) {
+		var b = a[i].split('=');
+		query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '').replace('+', ' ');
+	}
+	return query;
+}
+function tagsWanted() {
+	var t = document.querySelector('#t');
+	if (!t.validity.valid) {
+		t.style.color = 'red';
+		return [];
+	}
+	t.style.color = 'black';
+	t = t.value.split(' ');
+	for (var i = 0; i < t.length; i++) {
+		if (t[i] === '' || t[i][0] !== '#' || t[i] === '#') {
+			t.splice(i--, 1);
+		}
+	}
+	return t;
+}
+function filter() {
+	var t0 = performance.now();
+	var v = document.querySelector('#v');
+	var t = tagsWanted();
+
+	v.disabled = t.length > 0;
+	v = v.value;
+
+	var entries = document.querySelectorAll('.entry');
+	for (var i = 0; i < entries.length; i++) {
+		var entry = entries[i];
+		if (t.length === 0) {
+			if (entry.dataset.v > v) {
+				entry.style.display = 'none';
+			} else {
+				entry.style.display = 'block';
+			}
+			continue;
+		}
+		var tags = entry.querySelector('.tags');
+		if (!tags) {
+			tags = [];
+		} else {
+			tags = tags.textContent.split(' ');
+		}
+		var match = false;
+		for (var j = 0; j < t.length; j++) {
+			if (tags.indexOf(t[j]) !== -1) {
+				entry.style.display = 'block';
+				match = true;
+				break;
+			}
+		}
+		if (!match) {
+			entry.style.display = 'none';
+		}
+	}
+	var t1 = performance.now();
+	console.log('Filtering took', t1 - t0, 'milliseconds.');
+}
+document.onkeypress = function(e) {
+	var range = document.getElementById('v');
+	if (e.keyCode === 116) { // T
+		v.value--;
+	} else if (e.keyCode === 118) { // V
+		v.value++;
+	} else {
+		return;
+	}
+	filter();
+}
+function uniq(a) {
+	var seen = {};
+	return a.filter(function(item) {
+		return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+	});
+}
+function initialize() {
+	var t0 = performance.now();
+	var entries = document.querySelectorAll('.entry');
+	var taglist = '';
+	for (var i = 0; i < entries.length; i++) {
+		var entry = entries[i];
+		entry.onclick = function() {
+			var description = this.querySelector('.desc');
+			if (!description) {
+				return;
+			}
+			this.classList.toggle('expanded');
+			description.style.display = description.style.display === 'block' ? 'none' : 'block';
+		}
+		var desc = entry.querySelector('.desc');
+		if (!!desc) {
+			entry.classList.add('described');
+		}
+		var tags = entry.querySelector('.tags');
+		if (!tags) {
+			continue;
+		}
+		taglist += ' ' + tags.textContent.trim();
+	}
+	document.getElementById('taglist').textContent = uniq(taglist.split(' ')).sort().join(' ');
+	var t1 = performance.now()
+	console.log('Initialization took', t1 - t0, 'milliseconds.');
+}
+function boot() {
+	initialize();
+	filter();
+}
+</script>
+</head>
+<body onload="boot()">
+	<header>
+		Lorenz<span class="ultralight">@</span>Leutgeb<span class="ultralight">.xyz</span>
+	</header>
+	<div class="content">
+		<div class="centered">
+		<!---<p><span class="light">Currently based in Canberra, Australia (UTC+10:00)</span></p>
+		<p><span class="light">Originally from Vienna, Austria (UTC+01:00)</span></p>!-->
+		<p><span itemscope itemtype="https://schema.org/Person"><a itemprop="sameAs" content="https://orcid.org/0000-0003-0391-3430" href="https://orcid.org/0000-0003-0391-3430" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;"><img src="social-icons/orcid-logo.svg" class="si" alt="ORCID iD icon"></a></span> <a href="https://github.com/lorenzleutgeb"><img class="si" src="social-icons/github-logo.svg" /></a> <!--<a href="https://plus.google.com/+LorenzLeutgeb"><img class="si" src="social-icons/google-logo.svg" /></a>!--> <a href="https://twitter.com/lorenzleutgeb"><img class="si" src="social-icons/twitter-logo.svg" /></a> <a href="skype:lorenz.leutgeb?chat"><img class="si" src="social-icons/skype-logo.svg" /></a> <!--<a href="https://soundcloud.com/lorenzleutgeb"><img class="si" src="social-icons/soundcloud-logo.svg" /></a> <a href="https://www.reddit.com/user/lorenzleutgeb/"><img class="si" src="social-icons/reddit-alien-head-logo.svg" /></a>!--></p>
+		</div>
+		<!--<p class="mono"><a href="pgp.asc">03FA 933F 8D72 D752 AF8A  7D8F A2D6 BA02 EBB1 C984</a></p>-->
+		<!--<p><a href="https://doodle.com/lorenz.leutgeb">Schedule a meeting through MeetMe</a></p> -->
+	</div>
+
+<p class="no-print">Use this slider to show/hide information:</p>
+<p class="no-print center"> Terse <input id="v" type="range" min="0" max="9" value="0" oninput="filter()"> Verbose</p>
+
+<p class="no-print center">Filter by space-separated hashtags:&nbsp;<input id="t" type="text" oninput="filter()" pattern="^(#[a-z]+\s*)*#[a-z]+\s*$" placeholder="#topic #idea" required><br /><span id="taglist"> #cert #code #competition #google #intern #natlang #nl #ops<br />#oss #school #science #security #startup #uni #work</span></p>
+<hr widht="100%"/>
+<div class="entries">
+<div class="entry" data-v="0" style="display:block;">
+	<div class="time">2018-08/P2M</div>
+	<div class="tags">#uni #cs #cl</div>
+	<div class="title">Research Scientist/Engineer</div>
+	<div class="loc"><a href="https://iccl.inf.tu-dresden.de/">Commonwealth Scientific and Industrial Research Organization</a>, <a href="https://data61.csiro.au/">Data61</a>, <a href="http://ts.data61.csiro.au/">Trustworthy Systems Group</a><br />&nbsp;&nbsp;co-located with<br/><a href="https://cs.anu.edu.au/">Research School of Computer Science</a> (Australian National University, Canberra, Australia)</div>
+	<div class="desc">Project work, jointly sponsored by TU Dresden and CSIRO, towards implementation and verification of a <a href="https://webassembly.org">WebAssembly</a> target for the <a href="https://cakeml.org/">CakeML</a> compiler infrastructure. Supervised by <a href="https://ts.data61.csiro.au/people/?cn=Michael+Norrish">Michael Norrish</a>.</div>
+</div>
+<div class="entry" data-v="0" style="display:block;">
+	<div class="time">2017-10/ongoing</div>
+	<div class="tags">#uni #cs #cl</div>
+	<div class="title"><a href="http://emcl-study.eu">European Master's Program in Computational Logic</a></div>
+	<div class="loc"><a href="https://iccl.inf.tu-dresden.de/">International Center For Computational Logic</a> (TU Dresden, Germany),<br /><a href="https://www.inf.unibz.it/krdb/">The KRDB Research Centre for Knowledge and Data</a> (Free University of Bozen-Bolzano, Italy)<br /><a href="https://www.vcla.at/">Vienna Center for Logic and Algorithms</a> (TU Wien, Vienna, Austria)</div>
+	<div class="desc">
+		<ul>
+		<li>Elective Modules:
+		<dl>
+			<dt>Theoretical Computer Science and Logic</dt>
+			<dd>
+				<ul><li>Description Logic (Baader)</li><li>Nonmonotonic Reasoning (Turhan)</li></ul>
+			<dt>Principles of Inference</dt>
+			<dd>
+				<ul><li>Human Reasoning and Computational Logic (Hölldobler)</li><li>Formal Concept Analysis (Rudolph)</li></ul>
+			</dd>
+			<dt>Ontologies and Databases Systems</dt>
+			<dd>
+				<ul><li>Knowledge Representation and Ontologies (Calvanese)</li><li>Foundations of Databases (Nutt)</li></ul>
+			</dd>
+		</dl>
+		</li>
+		<li>Student Representative in the <a href="https://www.emcl-study.eu/fileadmin/emcl_booklet/#mp:aoc:jointcommission:2014">Joint Comission</a> (steering body of the program).</li>
+		<li>Classified as <a href="https://ec.europa.eu/ploteus/sites/eac-eqf/files/leaflet_en.pdf">EQR</a> 7, ISCED 7</li>
+		</ul>
+	</div>
+</div>
+<div class="entry" data-v="0" style="display:block;">
+	<div class="time">2017-08/ongoing</div>
+	<div class="tags">#work</div>
+	<div class="title">Software Engineer at <a href="https://sclable.com">Sclable Business Solutions GmbH</a></div>
+	<div class="loc">Vienna, Austria<br />remote</div>
+</div>
+<div class="entry described" data-v="6" style="display: none;">
+	<div class="time">2015-05</div>
+	<div class="tags">#security</div>
+	<div class="title">2<sup>nd</sup> place at <a href="https://2015.appsec.eu/university-challenge">OWASP AppSec University Challenge</a></div>
+	<div class="loc">Amsterdam, Netherlands</div>
+	<div class="desc">
+		OWASP AppSec holds a hacking challange as a sidekick for their yearly conference. I helped support the
+		Austrian delegation achieve the second place in 2015.
+	</div>
+</div>
+<div class="entry" data-v="5" style="display: block;">
+	<div class="time">2017-03/2017-06</div>
+	<div class="tags">#uni #cs</div>
+	<div class="title">Tutor in Theoretical Computer Science and Logics at <a href="https://tuwien.ac.at/en">TU Wien</a></div>
+</div>
+<div class="entry" data-v="3" style="display: block;">
+	<div class="time">2017-02/2017-03</div>
+	<div class="tags">#cs</div>
+	<div class="title">Student at <a href="https://lemmings.io/">Lemmings</a></div>
+</div>
+<div class="entry" data-v="6" style="display: none;">
+	<div class="time">2015-05</div>
+	<div class="tags">#oss #competition</div>
+	<div class="title">5<sup>th</sup> place at <a href="http://www.whataventure.com/netidee">netidee Open Source Camp</a></div>
+</div>
+<div class="entry" data-v="7" style="display: none;">
+	<div class="time">2015-04</div>
+	<div class="tags">#startup #competition</div>
+	<div class="title">Best startup pitch at CIO summit</div>
+</div>
+<div class="entry described" data-v="4" style="display: none;">
+	<div class="time">2014-10/2015-10</div>
+	<div class="tags">#startup</div>
+	<div class="title"><a href="http://awsg.at/first">aws First</a></div>
+	<div class="desc">
+		aws First is a program financed by the Austrian Ministry of Science, Research and Economy and the
+		Austrian Ministry of Austrian Ministry for Transport, Innovation and Technology.
+		Each year, ten teams of young students receive a stipend to work on a business idea, supported by
+		mentors and lecturers.
+	</div>
+</div>
+<div class="entry" data-v="6" style="display: none;">
+	<div class="time">2014-07/2014-08</div>
+	<div class="tags">#science</div>
+	<div class="title"><a href="http://www.xlab-goettingen.de/isc_general_information.html">XLAB International Science Camp</a></div>
+	<div class="loc">Göttingen, Germany</div>
+</div>
+<div class="entry" data-v="0" style="display: block;">
+	<div class="time">2014-03/2016-11</div>
+	<div class="tags">#work #code</div>
+	<div class="title">Software Engineer at <a href="https://catalysts.cc/">Catalysts GmbH</a></div>
+	<div class="loc">Vienna, Austria<br />Cluj, Romania</div>
+</div>
+<div class="entry" data-v="5" style="display: none;">
+	<div class="time">2013-09</div>
+	<div class="tags">#science</div>
+	<div class="title"><a href="http://eucys2013.ssc.avcr.cz/about-eucys/projects/search_projects.jsp?fulltext_search_all_words=Austria+Computing&amp;fulltext_search_pager_number_of_pages=20&amp;search=Hledat&amp;fulltext_search_exact_phrase=&amp;fulltext_search_any_words=&amp;fulltext_search_not_contain_words=&amp;fulltext_search_file_formats=anytype&amp;fulltext_search_date=anytime&amp;order_asc=true&amp;order_title=true&amp;q1=Austria&amp;q2=Computing&amp;searchFields=keywords">European Union Contest for Young Scientists</a></div>
+</div>
+<div class="entry" data-v="5" style="display: none;">
+	<div class="time">2013-08/P6M</div>
+	<div class="tags">#work</div>
+	<div class="title">Military Service at Austrian Armed Forces</div>
+</div>
+<div class="entry described" data-v="4" style="display: none;">
+	<div class="time">2013-08</div>
+	<div class="tags">#code #google</div>
+	<div class="title">Google Android Camp, London</div>
+	<div class="desc">
+		Google Android Camp is an initiative to promote Android programming among young students. Each year, Google
+		hand-picks a class in the order of 20 to 30 students and gathers them for a one week retreat full of coding.
+	</div>
+</div>
+<div class="entry" data-v="7" style="display: none;">
+	<div class="time">2013-04</div>
+	<div class="tags">#code #competition</div>
+	<div class="title">2<sup>nd</sup> place at <a href="http://contest.catalysts.cc/contest/school-ccc/">Catalysts School Coding Contest</a></div>
+</div>
+<div class="entry described" data-v="3" style="display: none;">
+	<div class="time">2013-04</div>
+	<div class="tags">#competition</div>
+	<div class="title">1<sup>st</sup> place at <a href="http://jugendinnovativ.at/">Jugend Innovativ</a> (Science Category)</div>
+	<div class="desc">
+		Jugend Innovativ is a national competition of school projects in Austria. Together with my colleague
+		Moritz Wanzenböck we won the category for science projects for our work on a Variable Neighborhood Search
+		for the Parition Graph Coloring Problem.
+	</div>
+</div>
+<div class="entry" data-v="8" style="display: none;">
+	<div class="time">2013-03</div>
+	<div class="tags">#cert</div>
+	<div class="title"><a href="https://www.netacad.com/courses/ccna">Cisco Certified Network Associate</a></div>
+</div>
+<div class="entry" data-v="7" style="display: none;">
+	<div class="time">2012-12</div>
+	<div class="tags">#code #competition</div>
+	<div class="title">2<sup>nd</sup> place at <a href="http://contest.catalysts.cc/contest/school-ccc/">Catalysts School Coding Contest</a></div>
+</div>
+<div class="entry" data-v="6" style="display: none;">
+	<div class="time">2012-12</div>
+	<div class="tags">#cert #natlang</div>
+	<div class="title"><a href="http://www.cambridgeenglish.org/exams/first/">Cambridge First Certificate in English</a> (CEFR C1)</div>
+</div>
+<div class="entry" data-v="5" style="display: none;">
+	<div class="time">2012-11</div>
+	<div class="tags">#code #competition #google</div>
+	<div class="title">1<sup>st</sup> place at <a href="https://devfest.at/">Google DevFest Vienna</a> Hackathon</div>
+</div>
+<div class="entry" data-v="8" style="display: none;">
+	<div class="time">2012-10</div>
+	<div class="tags">#code #competition</div>
+	<div class="title">16<sup>th</sup> place at <a href="http://contest.catalysts.cc/">Catalysts Coding Contest</a></div>
+</div>
+<div class="entry described" data-v="3" style="display: none;">
+	<div class="time">2011-08</div>
+	<div class="tags">#security #code #work</div>
+	<div class="title">Security Specialist at <a href="http://t-systems.at/">T-Systems Austria GmbH</a></div>
+	<div class="desc">
+		T-Systems, a subsidiary of Deutsche Telekom manages a huge fleet of servers for their outsourcing
+		clients. To fulfil requitements of security Audits, all this fleet as to be configured with a suite
+		of up-to-date and safe security settings. Over the course of my internship I wrote an analysis tool
+		that would gather information on the configuration parameters of all servers, such as SSH
+		configuration, password guidelines, session timeouts, etc. and report back.
+	</div>
+</div>
+<div class="entry described" data-v="3" style="display: none;">
+	<div class="time">2012-07</div>
+	<div class="tags">#code #work</div>
+	<div class="title">Intern at <a href="http://uni-klu.ac.at/">University of Klagenfurt</a></div>
+	<div class="desc">
+		The Institute of Networked and Embedded Systems at University of Klagenfurt is active
+		in a wide range of topics.
+		Throughout one month I got to write a sandbox for the JVM in order to execute code
+		submitted by students, write a selection criteria for a toolkit of evolutionary algorithms
+		and attend a conference on smart grids.
+	</div>
+</div>
+<div class="entry" data-v="7" style="display: none;">
+	<div class="time">2012-06</div>
+	<div class="tags">#competition #science</div>
+	<div class="title">3<sup>rd</sup> place at <a href="http://fti-remixed.at/">fti-remixed</a></div>
+</div>
+<div class="entry described" data-v="5" style="display: none;">
+	<div class="time">2012-06</div>
+	<div class="tags">#competition #uni</div>
+	<div class="title">2<sup>nd</sup> place at <i>k</i>-MST Coding Contest</div>
+	<div class="desc">
+		Each semester, there's a programming competition held as part of two courses on Algorithms and
+		Datastructures. When I attended the lecutres, the competition was about forumlating a
+		Branch-and-Bound solution to the k-MST Problem. At the age of 17 I managed to beat nearly all
+		other (most of them much older) students, falling short by a few permil after the first place.
+	</div>
+</div>
+<div class="entry" data-v="0" style="display: block;">
+	<div class="time">2011-09-21/2017-09-29</div>
+	<div class="tags">#uni</div>
+	<div class="title"><a href="http://www.informatik.tuwien.ac.at/studium/angebot/bachelor/software-and-information-engineering">Bachelor's Program in Software and Information Engineering</a></div>
+	<div class="loc"><a href="http://tuwien.ac.at/">TU Wien</a> (Vienna, Austria)</div>
+	<div class="desc">
+		For my thesis I worked on the ASP solver <a href="https://github.com/alpha-asp/Alpha">Alpha</a> and <a href="https://lorenz.leutgeb.xyz/paper/3wl.pdf">wrote about efficient unit propagation for lazy-grounding ASP systems</a>.<br>
+		In the summer semester 2017 I worked as a tutor in "Theoretical Computer Science and Logics". <br/>
+		Elective Modules:
+		<ul>
+			<li>Abstract Machines</li>
+			<li>Argumentation and Proof</li>
+			<li>Compilers</li>
+			<li>Declarative Problem Solving</li>
+			<li>Logic Programming and Constraints</li>
+		</ul>
+		Basic Modules:
+		<ul>
+			<li>Algebra and Discrete Mathematics</li>
+			<li>Analysis</li>
+			<li>Algorithms and Datastructures</li>
+			<li>Basics of Human-Computer Interaction</li>
+			<li>Contexts of System Development</li>
+			<li>Database Systems</li>
+			<li>Distributed Systems</li>
+			<li>Introduction to Visual Computing</li>
+			<li>Foundations of Intelligent Systems</li>
+			<li>Program Construction</li>
+			<li>Programming Paradigms</li>
+			<li>Operating Systems</li>
+			<li>Security</li>
+			<li>Software Engineering and Project Management</li>
+			<li>Statistics and Probability Theory</li>
+			<li>Technical Foundations of Informatics</li>
+			<li>Theoretical Computer Science and Logics</li>
+		</ul>
+		<a href="https://ec.europa.eu/ploteus/sites/eac-eqf/files/leaflet_en.pdf">EQR</a> 6, ISCED 5A
+	</div>
+</div>
+<div class="entry described" data-v="4" style="display: none;">
+	<div class="time">2011-11/2012-02</div>
+	<div class="tags">#code #school #google</div>
+	<div class="title"><a href="https://developers.google.com/open-source/gci/">Google Code-In</a></div>
+	<div class="desc">
+		As part of Google Code-In I translated the homepage for SymPy and wrote captions
+		for Perl introductory videos.
+	</div>
+</div>
+<div class="entry" data-v="4" style="display: none;">
+	<div class="time">2011-08</div>
+	<div class="tags">#work #intern</div>
+	<div class="title">Incident Manager at <a href="http://t-systems.at/">T-Systems Austria GmbH</a></div>
+</div>
+<div class="entry" data-v="5" style="display: none;">
+	<div class="time">2010-08</div>
+	<div class="tags">#work #intern #ops</div>
+	<div class="title">System Administrator at <a href="http://dieconsult.at/">dieConsult it-systems GmbH</a></div>
+</div>
+<div class="entry" data-v="5" style="display: none;">
+	<div class="time">2009-08</div>
+	<div class="tags">#work #intern #ops</div>
+	<div class="title">System Administrator at <a href="http://dieconsult.at/">dieConsult it-systems GmbH</a></div>
+</div>
+<div class="entry described" data-v="0" style="display: block;">
+	<div class="time">2008-09/2013-06</div>
+	<div class="tags">#school #code</div>
+	<div class="title">High school with focus on Information Technology</div>
+	<div class="loc"><a href="http://htl-ottakring.at/">HTL Ottakring</a> (Vienna, Austria)</a></div>
+	<div class="desc">
+		Specializing in Computer Networks and Electronics.
+		<br><hr/>
+		Subjects (with hours as product of school years and weekly hours):
+		<table>
+			<tr><td>Applied Mathematics</td><td>14</td></tr>
+			<tr><td>Projects and Project Management</td><td>13</td></tr>
+			<tr><td>German</td><td>11</td></tr>
+			<tr><td>English</td><td>11</td></tr>
+			<tr><td>Ethics</td><td>10</td></tr>
+			<tr><td>Foundations of Electronical Engineering and Electronics</td><td>9</td></tr>
+			<tr><td>Applied Programming</td><td>8</td></tr>
+			<tr><td>Computer Lab</td><td>8</td></tr>
+			<tr><td>Sports</td><td>8</td></tr>
+			<tr><td>Computer Networks</td><td>7</td></tr>
+			<tr><td>Global Communication Networks</td><td>7</td></tr>
+			<tr><td>Local Communication Networks</td><td>6</td></tr>
+			<tr><td>Network Management</td><td>6</td></tr>
+			<tr><td>Network Security</td><td>6</td></tr>
+			<tr><td>Media Technology</td><td>6</td></tr>
+			<tr><td>Foundations of Computer Science</td><td>5</td></tr>
+			<tr><td>Business and Law</td><td>5</td></tr>
+			<tr><td>Geography and Economics</td><td>4</td></tr>
+			<tr><td>Applied Physics</td><td>4</td></tr>
+			<tr><td>Applied Chemistry and Ecology</td><td>4</td></tr>
+			<tr><td>Business Administration</td><td>4</td></tr>
+			<tr><td>Operating Systems and Computer Architecture</td><td>4</td></tr>
+			<tr><td>Database Systems</td><td>4</td></tr>
+			<tr><td>Network Programming</td><td>4</td></tr>
+			<tr><td>Quality Management</td><td>2</td></tr>
+			<tr><td>Communcation and Presentation</td><td>2</td></tr>
+			<tr><td>Seminar in Networking Technology</td><td>2</td></tr>
+		</table>
+		<hr/>
+		Profile of Skills and Competences:
+		<span style="font-size: 80%">
+		<ul>
+			<li>knowledge of the theoretical and practical principles of computer studies concerning hardware and software</li>
+			<li>planning and executing projects, especially in the field of network technology and network planning</li>
+			<li>application of business knowledge in operational organisation and accounting with special regard for quality management and product management</li>
+			<li>substantial knowledge in the areas of communication technology, database systems and network programming</li>
+			<li>knowledge of process, product, and systems development in computer applications</li>
+			<li>application of subject relevant principles for the employment, planning and application of computer networks (data integrity, generating networks, graph theory, telecommunications, and interactivity in a standard foreign language)</li>
+			<li>application of media, methods and systems of data storage and retrieval, as well as the logic of internal processing in networks, data security</li>
+			<li>solving frequent problems of data storage with the aid of databases in networks taking into account data integrity, servicing and optimal use of storage space</li>
+			<li>employment of networks as an enlargement of the individual computer as well as the design of computer networks, methods of network security</li>
+			<li>use of existing software and of network operating systems and integration of software applications into existing public networks</li>
+			<li>application of management and troubleshooting concepts in existing networks</li>
+			<li>application of the principles of marketing, staff guidance, negotiating skills, contracting and financing</li>
+			<li>subject relevant written and oral communication in German and English</li>
+			<li>knowledge and employment of mobile communication and mobile devices</li>
+		</ul>
+		</span>
+		<a href="https://ec.europa.eu/ploteus/sites/eac-eqf/files/leaflet_en.pdf">EQR</a> 5, ISCED 4A
+	</div>
+</div>
+<div class="entry described" data-v="9" style="display: none;">
+	<div class="time">2005-07/2015-08</div>
+	<div class="tags">#natlang</div>
+	<div class="title">Language Study trip to Carlow International English Language School, IE</div>
+	<div class="desc">
+		At age 11, my language trip to Carlow was the first longer trip I did without my family.
+		I stayed with a host-family for two weeks and improved my english substantially.
+	</div>
+</div>
+<div class="entry" data-v="2" style="display: none;">
+	<div class="time">2004-09/2008-06</div>
+	<div class="tags">#school</div>
+	<div class="title">Grammar school</div>
+</div>
+<div class="entry" data-v="2" style="display: none;">
+	<div class="time">2000-09/2004-06</div>
+	<div class="tags">#school</div>
+	<div class="title">Primary school</div>
+</div>
+</div>
+</div>
+</body></html>
